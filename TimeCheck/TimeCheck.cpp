@@ -1,6 +1,7 @@
 ﻿#include <cstdlib>
 #include <iostream>
 #include <vector>
+#include <chrono>
 
 using namespace std;
 
@@ -37,16 +38,31 @@ void AppendRandom(vector<int>& v, int n) {
 
 void Operate() {
     vector<int> random_bits;
+    using namespace std::literals;
 
     // операция << для целых чисел это сдвиг всех бит в двоичной
     // записи числа. Запишем с её помощью число 2 в степени 17 (131072)
     static const int N = 1 << 17;
 
+    const chrono::steady_clock::time_point start_time1 = chrono::steady_clock::now();
+
     // заполним вектор случайными числами 0 и 1
     AppendRandom(random_bits, N);
+    
+    const chrono::steady_clock::time_point end_time1 = chrono::steady_clock::now();
+    const chrono::steady_clock::duration dur1 = end_time1 - start_time1;
+    cerr << "Append random: "s << dur1.count() << " ms" << endl;
+
+    const chrono::steady_clock::time_point start_time2 = chrono::steady_clock::now();
 
     // перевернём вектор задом наперёд
     vector<int> reversed_bits = ReverseVector(random_bits);
+
+    const chrono::steady_clock::time_point end_time2 = chrono::steady_clock::now();
+    const chrono::steady_clock::duration dur2 = end_time2 - start_time2;
+    cerr << "Reverse: "s << dur2.count() << " ms" << endl;
+
+    const chrono::steady_clock::time_point start_time3 = chrono::steady_clock::now();
 
     // посчитаем процент единиц на начальных отрезках вектора
     for (int i = 1, step = 1; i <= N; i += step, step *= 2) {
@@ -57,6 +73,10 @@ void Operate() {
         cout << "After "s << i << " bits we found "s << rate << "% pops"s
             << endl;
     }
+
+    const chrono::steady_clock::time_point end_time3 = chrono::steady_clock::now();
+    const chrono::steady_clock::duration dur3 = end_time3 - start_time3;
+    cerr << "Counting: "s << dur3.count() << " ms" << endl;
 }
 
 int main() {
